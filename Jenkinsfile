@@ -1,28 +1,28 @@
 pipeline {
     agent any
     stages {
-        stage('Build') {
+        stage('No-op') {
             steps {
-                bat '''
-                    if not exist build\\libs mkdir build\\libs
-                    echo application > build\\libs\\app.jar
-                '''
-            }
-        }
-        stage('Test') {
-            steps {
-                bat '''
-                    if not exist build\\reports mkdir build\\reports
-                    type tests\\TEST-demo.xml > build\\reports\\TEST-demo.xml
-                '''
+                bat 'dir'
             }
         }
     }
-
     post {
         always {
-            archiveArtifacts artifacts: 'build/libs/**/*.jar', fingerprint: true
-            junit 'build/reports/**/*.xml'
+            echo 'One way or another, I have finished'
+            deleteDir() /* clean up our workspace */
+        }
+        success {
+            echo 'I succeeded!'
+        }
+        unstable {
+            echo 'I am unstable :/'
+        }
+        failure {
+            echo 'I failed :('
+        }
+        changed {
+            echo 'Things were different before...'
         }
     }
 }
